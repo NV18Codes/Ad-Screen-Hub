@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdScreen Hub</title>
+    <link rel="icon" type="image/png" href="./Favicon.png">
+    <link rel="shortcut icon" type="image/png" href="./Favicon.png">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -142,9 +144,9 @@
 </head>
 <body>
     <video class="video-background" autoplay muted loop playsinline webkit-playsinline preload="auto">
-        <source id="mobile-video" src="Coming soon mobile.mp4" type="video/mp4" media="(max-width: 768px)">
-        <source id="desktop-video" src="Coming soon PC.mp4" type="video/mp4" media="(min-width: 769px)">
-        <source src="landingpage.mp4" type="video/mp4">
+        <source id="mobile-video" src="./Coming soon mobile.mp4" type="video/mp4" media="(max-width: 768px)">
+        <source id="desktop-video" src="./Coming soon PC.mp4" type="video/mp4" media="(min-width: 769px)">
+        <source src="./landingpage.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     
@@ -158,10 +160,10 @@
             function setVideoSource() {
                 const isMobileNow = window.innerWidth <= 768;
                 if (isMobileNow) {
-                    video.src = 'Coming soon mobile.mp4';
+                    video.src = './Coming soon mobile.mp4';
                     console.log('Loading mobile video');
                 } else {
-                    video.src = 'Coming soon PC.mp4';
+                    video.src = './Coming soon PC.mp4';
                     console.log('Loading desktop video');
                 }
                 video.load();
@@ -180,6 +182,14 @@
                 video.play().catch(function(error) {
                     console.log("Autoplay failed, trying user interaction:", error);
                 });
+            });
+            
+            // Handle video loading errors
+            video.addEventListener('error', function(e) {
+                console.log("Video loading error:", e);
+                console.log("Trying fallback video...");
+                video.src = './landingpage.mp4';
+                video.load();
             });
             
             // Handle mobile-specific video issues
