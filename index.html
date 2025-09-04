@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdScreen Hub</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -15,64 +18,197 @@
             background: #000;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        
+        /* Fallback background in case video doesn't load */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            z-index: -2;
         }
 
         .video-background {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: cover;
             object-position: center;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
         }
 
-        /* Ensure video works on all devices */
-        @media (max-width: 768px) {
+        /* Mobile devices - Portrait */
+        @media screen and (max-width: 767px) and (orientation: portrait) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
             }
         }
 
-        @media (max-width: 480px) {
+        /* Mobile devices - Landscape */
+        @media screen and (max-width: 767px) and (orientation: landscape) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
             }
         }
 
-        /* Handle landscape orientation on mobile */
-        @media (orientation: landscape) and (max-height: 500px) {
+        /* Small mobile devices */
+        @media screen and (max-width: 480px) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
             }
         }
 
-        /* Handle portrait orientation on mobile */
-        @media (orientation: portrait) and (max-width: 500px) {
+        /* Extra small devices */
+        @media screen and (max-width: 320px) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
             }
         }
 
-        /* Ensure video works on tablets */
-        @media (min-width: 769px) and (max-width: 1024px) {
+        /* Tablets */
+        @media screen and (min-width: 768px) and (max-width: 1024px) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
             }
         }
 
         /* Large screens */
-        @media (min-width: 1025px) {
+        @media screen and (min-width: 1025px) {
             .video-background {
+                width: 100vw;
+                height: 100vh;
                 object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media screen and (min-width: 1440px) {
+            .video-background {
+                width: 100vw;
+                height: 100vh;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        /* Safari specific fixes */
+        @supports (-webkit-appearance: none) {
+            .video-background {
+                width: 100vw;
+                height: 100vh;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        /* Firefox specific fixes */
+        @supports (-moz-appearance: none) {
+            .video-background {
+                width: 100vw;
+                height: 100vh;
+                object-fit: cover;
+                object-position: center;
             }
         }
     </style>
 </head>
 <body>
-    <video class="video-background" autoplay muted loop playsinline>
+    <video class="video-background" autoplay muted loop playsinline webkit-playsinline preload="auto">
+        <source id="mobile-video" src="Coming soon mobile.mp4" type="video/mp4" media="(max-width: 768px)">
+        <source id="desktop-video" src="Coming soon PC.mp4" type="video/mp4" media="(min-width: 769px)">
         <source src="landingpage.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    
+    <script>
+        // Device detection and video loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.video-background');
+            const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Set the appropriate video source based on device
+            function setVideoSource() {
+                const isMobileNow = window.innerWidth <= 768;
+                if (isMobileNow) {
+                    video.src = 'Coming soon mobile.mp4';
+                    console.log('Loading mobile video');
+                } else {
+                    video.src = 'Coming soon PC.mp4';
+                    console.log('Loading desktop video');
+                }
+                video.load();
+            }
+            
+            // Set initial video source
+            setVideoSource();
+            
+            // Handle window resize to switch videos
+            window.addEventListener('resize', function() {
+                setVideoSource();
+            });
+            
+            // Ensure video plays on all devices
+            video.addEventListener('loadeddata', function() {
+                video.play().catch(function(error) {
+                    console.log("Autoplay failed, trying user interaction:", error);
+                });
+            });
+            
+            // Handle mobile-specific video issues
+            if (isMobile) {
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+                video.muted = true;
+                
+                // Try to play after a short delay
+                setTimeout(function() {
+                    video.play().catch(function(error) {
+                        console.log("Mobile autoplay failed:", error);
+                    });
+                }, 100);
+            }
+            
+            // Fallback: try to play on any user interaction
+            document.addEventListener('touchstart', function() {
+                video.play().catch(function(error) {
+                    console.log("Touch play failed:", error);
+                });
+            }, { once: true });
+            
+            document.addEventListener('click', function() {
+                video.play().catch(function(error) {
+                    console.log("Click play failed:", error);
+                });
+            }, { once: true });
+        });
+    </script>
 </body>
 </html>
