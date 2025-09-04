@@ -145,8 +145,7 @@
 <body>
     <video class="video-background" autoplay muted loop playsinline webkit-playsinline preload="auto">
         <source id="mobile-video" src="./Coming soon mobile.mp4" type="video/mp4" media="(max-width: 768px)">
-        <source id="desktop-video" src="./Coming soon PC.mp4" type="video/mp4" media="(min-width: 769px)">
-        <source src="./landingpage.mp4" type="video/mp4">
+        <source id="desktop-video" src="./coming soon PC.mp4" type="video/mp4" media="(min-width: 769px)">
         Your browser does not support the video tag.
     </video>
     
@@ -159,12 +158,15 @@
             // Set the appropriate video source based on device
             function setVideoSource() {
                 const isMobileNow = window.innerWidth <= 768;
+                const isLocal = window.location.protocol === 'file:';
+                const basePath = isLocal ? './' : '/';
+                
                 if (isMobileNow) {
-                    video.src = './Coming soon mobile.mp4';
-                    console.log('Loading mobile video');
+                    video.src = basePath + 'Coming soon mobile.mp4';
+                    console.log('Loading mobile video:', video.src);
                 } else {
-                    video.src = './Coming soon PC.mp4';
-                    console.log('Loading desktop video');
+                    video.src = basePath + 'coming soon PC.mp4';
+                    console.log('Loading desktop video:', video.src);
                 }
                 video.load();
             }
@@ -188,7 +190,10 @@
             video.addEventListener('error', function(e) {
                 console.log("Video loading error:", e);
                 console.log("Trying fallback video...");
-                video.src = './landingpage.mp4';
+                // Use desktop video as fallback
+                const isLocal = window.location.protocol === 'file:';
+                const basePath = isLocal ? './' : '/';
+                video.src = basePath + 'coming soon PC.mp4';
                 video.load();
             });
             
